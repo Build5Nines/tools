@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "10937764443575903457"
+      "templateHash": "17024721049887123286"
     }
   },
   "parameters": {
@@ -56,9 +56,27 @@
     "publicIpAddressType": {
       "type": "string",
       "defaultValue": "Static"
+    },
+    "customScriptLabFilesUri": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "URI of the the ZIP file of lab files to download to VM"
+      }
+    },
+    "customScriptLabFilesFolder": {
+      "type": "string",
+      "defaultValue": "C:\\lab",
+      "metadata": {
+        "description": "Folder to download the lab files to"
+      }
     }
   },
   "variables": {
+    "customScriptFolder": "https://raw.githubusercontent.com/build5nines/tools/main/iac/azure/b59-dev-vm/scripts/",
+    "customScriptFileName": "configure-vm.ps1",
+    "customScriptUri": "[format('{0}{1}', variables('customScriptFolder'), variables('customScriptFileName'))]",
+    "customScriptCommandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('customScriptFileName'), ' -sourceFileUrl ', parameters('customScriptLabFilesUri'), ' -destinationFolder ', parameters('customScriptLabFilesFolder'))]",
     "virtualMachineZone": "1",
     "resourceNamePrefix": "[format('{0}-{1}', parameters('resourcePrefix'), uniqueString(resourceGroup().id))]",
     "computerName": "build5nines"
@@ -201,6 +219,28 @@
       ],
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', variables('resourceNamePrefix')))]"
+      ]
+    },
+    {
+      "condition": "[not(equals(variables('customScriptCommandToExecute'), ''))]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2022-07-01",
+      "name": "[format('{0}/{1}', format('{0}-vm', variables('resourceNamePrefix')), 'ConfigureVM')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.10",
+        "autoUpgradeMinorVersion": false,
+        "settings": {
+          "fileUris": [
+            "[variables('customScriptUri')]"
+          ],
+          "commandToExecute": "[variables('customScriptCommandToExecute')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', format('{0}-vm', variables('resourceNamePrefix')))]"
       ]
     }
   ],

@@ -31,6 +31,21 @@ param ipAaddressPrefixes array = [
 param virtualMachineSize string = 'Standard_D4s_v5'
 param publicIpAddressType string = 'Static'
 
+
+
+@description('URI of the the ZIP file of lab files to download to VM')
+param customScriptFilesZipUri string = ''
+@description('Folder to download the lab files to')
+param customScriptFilesDestFolder string = 'C:\\lab'
+
+
+var customScriptFolder = 'https://raw.githubusercontent.com/build5nines/tools/main/iac/azure/b59-dev-vm/scripts/'
+var customScriptFileName = 'configure-vm.ps1'
+var customScriptUri = '${customScriptFolder}${customScriptFileName}'
+var customScriptInstallOptions = 'Chrome|VSCode|Git|PowerShell|AzurePowerShell|Terraform'
+var customScriptCommandToExecute = 'powershell -ExecutionPolicy Unrestricted -File ${customScriptFileName} -sourceZipUrl ${customScriptFilesZipUri} -destinationFolder ${customScriptFilesDestFolder} -installOptions "${customScriptInstallOptions}"'
+
+
 var virtualMachineZone = '1'
 var resourceNamePrefix = '${resourcePrefix}-${uniqueString(resourceGroup().id)}'
 var computerName = 'build5nines'
@@ -165,6 +180,29 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-03-01' = {
     virtualMachineZone
   ]
 }
+
+
+resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2022-07-01' = if (customScriptCommandToExecute != '') {
+  name: 'ConfigureVM'
+  location: location
+  parent: virtualMachine
+  dependsOn: [
+    virtualMachine
+  ]
+  properties: {
+    publisher: 'Microsoft.Compute'
+    type: 'CustomScriptExtension'
+    typeHandlerVersion: '1.10'
+    autoUpgradeMinorVersion: false
+    settings: {
+      fileUris: [
+        customScriptUri
+      ]
+      commandToExecute: customScriptCommandToExecute
+    }
+  }
+}
+
 
 output adminUsername string = adminUsername
 
