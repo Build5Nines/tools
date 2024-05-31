@@ -44,7 +44,7 @@ param customScriptInstallOptions string = 'Chrome|VSCode|Git|PowerShell|AzureCLI
 var customScriptFolder = 'https://raw.githubusercontent.com/build5nines/tools/main/iac/azure/b59-dev-vm/scripts/'
 var customScriptFileName = 'configure-vm.ps1'
 var customScriptUri = '${customScriptFolder}${customScriptFileName}'
-var customScriptCommandToExecute = 'powershell -ExecutionPolicy Unrestricted -File ${customScriptFileName} -sourceZipUrl ${customScriptFilesZipUri} -destinationFolder ${customScriptFilesDestFolder} -installOptions "${customScriptInstallOptions}"'
+var customScriptCommandToExecute = 'powershell -ExecutionPolicy Unrestricted -File "${customScriptFileName}" -sourceZipUrl "${customScriptFilesZipUri}" -destinationFolder "${customScriptFilesDestFolder}" -installOptions "${customScriptInstallOptions}"'
 
 
 var virtualMachineZone = '1'

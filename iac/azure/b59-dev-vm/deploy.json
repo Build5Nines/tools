@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "7819978805538433437"
+      "templateHash": "8186246677092507647"
     }
   },
   "parameters": {
@@ -83,7 +83,7 @@
     "customScriptFolder": "https://raw.githubusercontent.com/build5nines/tools/main/iac/azure/b59-dev-vm/scripts/",
     "customScriptFileName": "configure-vm.ps1",
     "customScriptUri": "[format('{0}{1}', variables('customScriptFolder'), variables('customScriptFileName'))]",
-    "customScriptCommandToExecute": "[format('powershell -ExecutionPolicy Unrestricted -File {0} -sourceZipUrl {1} -destinationFolder {2} -installOptions \"{3}\"', variables('customScriptFileName'), parameters('customScriptFilesZipUri'), parameters('customScriptFilesDestFolder'), parameters('customScriptInstallOptions'))]",
+    "customScriptCommandToExecute": "[format('powershell -ExecutionPolicy Unrestricted -File \"{0}\" -sourceZipUrl \"{1}\" -destinationFolder \"{2}\" -installOptions \"{3}\"', variables('customScriptFileName'), parameters('customScriptFilesZipUri'), parameters('customScriptFilesDestFolder'), parameters('customScriptInstallOptions'))]",
     "virtualMachineZone": "1",
     "resourceNamePrefix": "[format('{0}-{1}', parameters('resourcePrefix'), uniqueString(resourceGroup().id))]",
     "computerName": "build5nines"
