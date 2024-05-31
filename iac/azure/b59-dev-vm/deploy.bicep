@@ -1,7 +1,7 @@
 @minLength(1)
 param location string = resourceGroup().location
 
-param resourcePrefix string = 'b59-dev-'
+param resourcePrefix string = 'b59-dev'
 
 param adminUsername string = 'b59user'
 

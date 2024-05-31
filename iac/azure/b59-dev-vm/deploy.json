@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "697931801768714150"
+      "templateHash": "7819978805538433437"
     }
   },
   "parameters": {
@@ -16,7 +16,7 @@
     },
     "resourcePrefix": {
       "type": "string",
-      "defaultValue": "b59-dev-"
+      "defaultValue": "b59-dev"
     },
     "adminUsername": {
       "type": "string",
