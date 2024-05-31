@@ -15,6 +15,17 @@ function Download-File {
     $client.DownloadFile($url, $output)
 }
 
+# Add to the PATH
+function Add-Path {
+    param (
+        [string]$path
+    )
+    if (-not ($env:Path -contains $path)) {
+        Write-Output "Adding [$path] to the PATH..."
+        $env:Path += ";$path"
+    }
+}
+
 if([string]::IsNullOrEmpty($sourceZipUrl) -eq $false -and [string]::IsNullOrEmpty($destinationFolder) -eq $false)
 {
     if((Test-Path $destinationFolder) -eq $false)
@@ -84,11 +95,7 @@ function Install-Terraform {
         Remove-Item -Path $zipPath
 
         # Add Terraform to the PATH
-        if ($env:Path -notlike "*$installDir*") {
-            Write-Output "Adding Terraform to the PATH..."
-            [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$installDir", [System.EnvironmentVariableTarget]::Machine)
-            $env:Path += ";$installDir"
-        }
+        Add-Path $installDir
 
         Write-Output "Terraform $latestVersion installation completed."
         # Write-Output "You may need to restart your terminal or system for the changes to take effect."
@@ -180,6 +187,9 @@ function Install-NodeJS {
     Remove-Item -Path $installerPath
 
     Write-Output "Node.js $latestVersion installation completed."
+
+    # Add Node.js to the PATH
+    Add-Path "C:\Program Files\nodejs"
 }
 
 function Install-Python {
@@ -187,7 +197,7 @@ function Install-Python {
     $pythonReleaseUrl = "https://www.python.org/ftp/python/"
 
     # # Path to download the installer
-    # $installerPath = "$env:TEMP\python-installer.exe"
+    $installerPath = "$env:TEMP\python-installer.exe"
 
     # # Get the latest Python version number
     # Write-Output "Fetching the latest Python version..."
@@ -205,12 +215,22 @@ function Install-Python {
 
     # Install Python
     Write-Output "Installing Python $latestVersion..."
-    Start-Process -FilePath $installerPath -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait
+    $installedPath = "C:\Program Files\Python"
+    Start-Process -FilePath $installerPath -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 TargetDir=""$installedPath""" -Wait
 
     # Cleanup the installer
     Remove-Item -Path $installerPath
 
     Write-Output "Python $latestVersion installation completed."
+
+    # Add Python to the PATH
+    Add-Path $installedPath
+
+    # Install pip
+    py -m ensurepip --upgrade
+
+    # Add pip to the PATH
+    Add-Path "$installedPath\Scripts"
 }
 
 
@@ -229,11 +249,7 @@ if([string]::IsNullOrEmpty($installOptions) -eq $false)
         Remove-Item $Path\$Installer
 
         # Add VSCode to the PATH
-        $vsCodePath = "C:\Program Files\Microsoft VS Code\bin"
-        if (-not $env:Path -contains $vsCodePath) {
-            Write-Output "Adding VSCode to the PATH..."
-            [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$vsCodePath", [EnvironmentVariableTarget]::Machine)
-        }
+        Add-Path "C:\Program Files\Microsoft VS Code\bin"
     }
 
     if($installOptions.Contains("Git")) 
