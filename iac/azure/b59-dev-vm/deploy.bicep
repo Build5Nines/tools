@@ -183,7 +183,7 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-03-01' = {
 }
 
 
-resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2022-07-01' = {
+resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2024-03-01' = {
   name: 'ConfigureVM'
   location: location
   parent: virtualMachine

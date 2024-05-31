@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "3335089610168704666"
+      "templateHash": "697931801768714150"
     }
   },
   "parameters": {
@@ -230,7 +230,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2022-07-01",
+      "apiVersion": "2024-03-01",
       "name": "[format('{0}/{1}', format('{0}-vm', variables('resourceNamePrefix')), 'ConfigureVM')]",
       "location": "[parameters('location')]",
       "properties": {
