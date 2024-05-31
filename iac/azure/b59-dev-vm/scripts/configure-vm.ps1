@@ -237,6 +237,18 @@ function Install-Python {
 # Optionally install additional software
 if([string]::IsNullOrEmpty($installOptions) -eq $false) 
 {
+    if($installOptions.Contains("Chrome")) 
+    {
+        # Install Chrome
+        $Path = $env:TEMP; 
+        $Installer = "chrome_installer.exe"
+        Write-Output "Downloading Chrome installer"
+        Invoke-WebRequest "https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B1DB6D184-EB8D-49F0-8F44-F11A72305C30%7D%26lang%3Den%26browser%3D5%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dprefers%26ap%3Dx64-statsdef_1%26installdataindex%3Dempty/update2/installers/ChromeSetup.exe" -OutFile $Path\$Installer
+        Write-Output "Installing Chrome from $Path\$Installer..."
+        Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait
+        Remove-Item $Path\$Installer
+    }
+
     if($installOptions.Contains("VSCode")) 
     {
         # Install VS Code
