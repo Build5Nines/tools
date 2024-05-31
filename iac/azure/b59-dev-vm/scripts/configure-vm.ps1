@@ -22,7 +22,13 @@ function Add-Path {
     )
     if (-not ($env:Path -contains $path)) {
         Write-Output "Adding [$path] to the PATH..."
-        $env:Path += ";$path"
+        #$env:Path += ";$path"
+        $currentPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+        # Add the new path to the current PATH
+        $newPath = "$currentPath;$path"
+        # Set the system PATH environment variable
+        [System.Environment]::SetEnvironmentVariable("Path", $newPath, [System.EnvironmentVariableTarget]::Machine)
+
     }
 }
 
