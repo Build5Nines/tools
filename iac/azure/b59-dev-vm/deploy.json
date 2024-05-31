@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "17024721049887123286"
+      "templateHash": "3335089610168704666"
     }
   },
   "parameters": {
@@ -57,18 +57,25 @@
       "type": "string",
       "defaultValue": "Static"
     },
-    "customScriptLabFilesUri": {
+    "customScriptFilesZipUri": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
         "description": "URI of the the ZIP file of lab files to download to VM"
       }
     },
-    "customScriptLabFilesFolder": {
+    "customScriptFilesDestFolder": {
       "type": "string",
       "defaultValue": "C:\\lab",
       "metadata": {
         "description": "Folder to download the lab files to"
+      }
+    },
+    "customScriptInstallOptions": {
+      "type": "string",
+      "defaultValue": "Chrome|VSCode|Git|PowerShell|AzureCLI|AzurePowerShell|Terraform",
+      "metadata": {
+        "description": "List of software to install on the VM"
       }
     }
   },
@@ -76,7 +83,7 @@
     "customScriptFolder": "https://raw.githubusercontent.com/build5nines/tools/main/iac/azure/b59-dev-vm/scripts/",
     "customScriptFileName": "configure-vm.ps1",
     "customScriptUri": "[format('{0}{1}', variables('customScriptFolder'), variables('customScriptFileName'))]",
-    "customScriptCommandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('customScriptFileName'), ' -sourceFileUrl ', parameters('customScriptLabFilesUri'), ' -destinationFolder ', parameters('customScriptLabFilesFolder'))]",
+    "customScriptCommandToExecute": "[format('powershell -ExecutionPolicy Unrestricted -File {0} -sourceZipUrl {1} -destinationFolder {2} -installOptions \"{3}\"', variables('customScriptFileName'), parameters('customScriptFilesZipUri'), parameters('customScriptFilesDestFolder'), parameters('customScriptInstallOptions'))]",
     "virtualMachineZone": "1",
     "resourceNamePrefix": "[format('{0}-{1}', parameters('resourcePrefix'), uniqueString(resourceGroup().id))]",
     "computerName": "build5nines"
@@ -222,7 +229,6 @@
       ]
     },
     {
-      "condition": "[not(equals(variables('customScriptCommandToExecute'), ''))]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2022-07-01",
       "name": "[format('{0}/{1}', format('{0}-vm', variables('resourceNamePrefix')), 'ConfigureVM')]",

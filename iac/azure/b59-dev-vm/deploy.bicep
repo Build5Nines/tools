@@ -38,11 +38,12 @@ param customScriptFilesZipUri string = ''
 @description('Folder to download the lab files to')
 param customScriptFilesDestFolder string = 'C:\\lab'
 
+@description('List of software to install on the VM')
+param customScriptInstallOptions string = 'Chrome|VSCode|Git|PowerShell|AzureCLI|AzurePowerShell|Terraform'
 
 var customScriptFolder = 'https://raw.githubusercontent.com/build5nines/tools/main/iac/azure/b59-dev-vm/scripts/'
 var customScriptFileName = 'configure-vm.ps1'
 var customScriptUri = '${customScriptFolder}${customScriptFileName}'
-var customScriptInstallOptions = 'Chrome|VSCode|Git|PowerShell|AzurePowerShell|Terraform'
 var customScriptCommandToExecute = 'powershell -ExecutionPolicy Unrestricted -File ${customScriptFileName} -sourceZipUrl ${customScriptFilesZipUri} -destinationFolder ${customScriptFilesDestFolder} -installOptions "${customScriptInstallOptions}"'
 
 
@@ -182,12 +183,11 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-03-01' = {
 }
 
 
-resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2022-07-01' = if (customScriptCommandToExecute != '') {
+resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2022-07-01' = {
   name: 'ConfigureVM'
   location: location
   parent: virtualMachine
   dependsOn: [
-    virtualMachine
   ]
   properties: {
     publisher: 'Microsoft.Compute'
