@@ -51,11 +51,17 @@ var virtualMachineZone = '1'
 var resourceNamePrefix = '${resourcePrefix}-${uniqueString(resourceGroup().id)}'
 var computerName = 'build5nines'
 
+var tags = {
+  IaC: 'Azure Bicep'
+  source: 'https://github.com/Build5Nines/tools/blob/main/iac/azure/b59-dev-vm/deploy.bicep'
+}
+
 resource networkInterface 'Microsoft.Network/networkInterfaces@2022-11-01' = {
   name: '${resourceNamePrefix}-nic'
   location: location
   dependsOn: [
   ]
+  tags: tags
   properties: {
     ipConfigurations: [
       {
@@ -83,6 +89,7 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2022-11-01' = {
 resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
   name: '${resourceNamePrefix}-nsg'
   location: location
+  tags: tags
   properties: {
     securityRules: networkSecurityGroupRules
   }
@@ -91,6 +98,7 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2020-05-0
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
   name: '${resourceNamePrefix}-vnet'
   location: location
+  tags: tags
   properties: {
     addressSpace: {
       addressPrefixes: ipAaddressPrefixes
@@ -109,6 +117,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
 resource publicIpAddress 'Microsoft.Network/publicIpAddresses@2020-08-01' = {
   name: '${resourceNamePrefix}-ip'
   location: location
+  tags: tags
   properties: {
     publicIPAllocationMethod: publicIpAddressType
   }
@@ -123,6 +132,7 @@ resource publicIpAddress 'Microsoft.Network/publicIpAddresses@2020-08-01' = {
 resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-03-01' = {
   name: '${resourceNamePrefix}-vm'
   location: location
+  tags: tags
   dependsOn: [
   ]
 

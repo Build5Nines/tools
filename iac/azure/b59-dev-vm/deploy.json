@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "2131183176553915335"
+      "templateHash": "12750965766291493712"
     }
   },
   "parameters": {
@@ -86,7 +86,11 @@
     "customScriptCommandToExecute": "[format('powershell -ExecutionPolicy Unrestricted -File \"{0}\" -sourceZipUrl \"{1}\" -destinationFolder \"{2}\" -installOptions \"{3}\"', variables('customScriptFileName'), parameters('customScriptFilesZipUri'), parameters('customScriptFilesDestFolder'), parameters('customScriptInstallOptions'))]",
     "virtualMachineZone": "1",
     "resourceNamePrefix": "[format('{0}-{1}', parameters('resourcePrefix'), uniqueString(resourceGroup().id))]",
-    "computerName": "build5nines"
+    "computerName": "build5nines",
+    "tags": {
+      "IaC": "Azure Bicep",
+      "source": "https://github.com/Build5Nines/tools/blob/main/iac/azure/b59-dev-vm/deploy.bicep"
+    }
   },
   "resources": [
     {
@@ -94,6 +98,7 @@
       "apiVersion": "2022-11-01",
       "name": "[format('{0}-nic', variables('resourceNamePrefix'))]",
       "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
       "properties": {
         "ipConfigurations": [
           {
@@ -127,6 +132,7 @@
       "apiVersion": "2020-05-01",
       "name": "[format('{0}-nsg', variables('resourceNamePrefix'))]",
       "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
       "properties": {
         "securityRules": "[parameters('networkSecurityGroupRules')]"
       }
@@ -136,6 +142,7 @@
       "apiVersion": "2023-05-01",
       "name": "[format('{0}-vnet', variables('resourceNamePrefix'))]",
       "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": "[parameters('ipAaddressPrefixes')]"
@@ -155,6 +162,7 @@
       "apiVersion": "2020-08-01",
       "name": "[format('{0}-ip', variables('resourceNamePrefix'))]",
       "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
       "properties": {
         "publicIPAllocationMethod": "[parameters('publicIpAddressType')]"
       },
@@ -170,6 +178,7 @@
       "apiVersion": "2024-03-01",
       "name": "[format('{0}-vm', variables('resourceNamePrefix'))]",
       "location": "[parameters('location')]",
+      "tags": "[variables('tags')]",
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('virtualMachineSize')]"
