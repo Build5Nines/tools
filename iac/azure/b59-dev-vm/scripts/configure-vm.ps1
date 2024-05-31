@@ -1,4 +1,4 @@
-param($sourceZipUrl="", $destinationFolder="", $labName="Ignored",$installOptions="Chrome")
+param($sourceZipUrl="", $destinationFolder="", $installOptions="Chrome")
 Start-Transcript "C:\scriptlog.txt"
 $ErrorActionPreference = 'SilentlyContinue'
 
