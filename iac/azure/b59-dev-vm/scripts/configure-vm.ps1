@@ -55,6 +55,34 @@ New-ItemProperty -Path $HKLM -Name "DoNotOpenServerManagerAtLogon" -Value 1 -Pro
 Set-ItemProperty -Path $HKLM -Name "DoNotOpenServerManagerAtLogon" -Value 1 -Type DWord
 
 
+# Check if winget is installed
+if (-not (Get-Command "winget" -ErrorAction SilentlyContinue)) {
+    Write-Output "winget is not installed. Installing winget..."
+
+    # URL to download the latest App Installer package
+    $appInstallerUrl = "https://aka.ms/getwinget"
+
+    # Path to download the installer
+    $installerPath = "$env:TEMP\AppInstaller.msixbundle"
+
+    # Download the App Installer package
+    Write-Output "Downloading App Installer package..."
+    # Invoke-WebRequest -Uri $appInstallerUrl -OutFile $installerPath
+    Download-File -url $appInstallerUrl -output $installerPath
+
+    # Install the App Installer package
+    Write-Output "Installing App Installer package..."
+    Add-AppxPackage -Path $installerPath
+
+    # Cleanup the installer
+    Remove-Item -Path $installerPath
+
+    Write-Output "winget installation completed. You may need to restart your terminal."
+} else {
+    Write-Output "winget is already installed."
+}
+
+
 # ############################################################
 function Install-Terraform {
      # Set the URL to check the latest Terraform version
@@ -232,6 +260,8 @@ function Install-Python {
     # Add pip to the PATH
     Add-Path "$installedPath\Scripts"
 }
+
+
 
 
 # Optionally install additional software
