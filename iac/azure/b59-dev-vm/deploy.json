@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "13877320648425123260"
+      "templateHash": "710024814108744702"
     }
   },
   "parameters": {
@@ -55,7 +55,11 @@
     },
     "publicIpAddressType": {
       "type": "string",
-      "defaultValue": "Static"
+      "defaultValue": "Dynamic",
+      "allowedValues": [
+        "Static",
+        "Dynamic"
+      ]
     },
     "customScriptFilesZipUri": {
       "type": "string",
@@ -165,7 +169,10 @@
       "location": "[parameters('location')]",
       "tags": "[variables('tags')]",
       "properties": {
-        "publicIPAllocationMethod": "[parameters('publicIpAddressType')]"
+        "publicIPAllocationMethod": "[parameters('publicIpAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('resourceNamePrefix')]"
+        }
       },
       "sku": {
         "name": "Standard"
@@ -264,6 +271,10 @@
     "adminUsername": {
       "type": "string",
       "value": "[parameters('adminUsername')]"
+    },
+    "virtualMachineFQDN": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', format('{0}-ip', variables('resourceNamePrefix'))), '2020-08-01').dnsSettings.fqdn]"
     },
     "publicIpAddress": {
       "type": "string",

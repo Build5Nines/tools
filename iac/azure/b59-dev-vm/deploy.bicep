@@ -29,8 +29,12 @@ param ipAaddressPrefixes array = [
 ]
 
 param virtualMachineSize string = 'Standard_D4s_v5'
-param publicIpAddressType string = 'Static'
 
+@allowed([
+  'Static'
+  'Dynamic'
+])
+param publicIpAddressType string = 'Dynamic'
 
 
 @description('URI of the the ZIP file of lab files to download to VM')
@@ -121,6 +125,9 @@ resource publicIpAddress 'Microsoft.Network/publicIpAddresses@2020-08-01' = {
   tags: tags
   properties: {
     publicIPAllocationMethod: publicIpAddressType
+    dnsSettings: {
+      domainNameLabel: resourceNamePrefix
+    }
   }
   sku: {
     name: 'Standard'
@@ -217,6 +224,7 @@ resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@202
 
 output adminUsername string = adminUsername
 
+output virtualMachineFQDN string = publicIpAddress.properties.dnsSettings.fqdn
 output publicIpAddress string = publicIpAddress.properties.ipAddress
 
 output virtualNetworkResourceId string = virtualNetwork.id
