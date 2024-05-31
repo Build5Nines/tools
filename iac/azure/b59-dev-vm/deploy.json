@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "12750965766291493712"
+      "templateHash": "13877320648425123260"
     }
   },
   "parameters": {
@@ -88,6 +88,7 @@
     "resourceNamePrefix": "[format('{0}-{1}', parameters('resourcePrefix'), uniqueString(resourceGroup().id))]",
     "computerName": "build5nines",
     "tags": {
+      "Name": "Build5Nines Dev VM",
       "IaC": "Azure Bicep",
       "source": "https://github.com/Build5Nines/tools/blob/main/iac/azure/b59-dev-vm/deploy.bicep"
     }

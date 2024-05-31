@@ -52,6 +52,7 @@ var resourceNamePrefix = '${resourcePrefix}-${uniqueString(resourceGroup().id)}'
 var computerName = 'build5nines'
 
 var tags = {
+  Name: 'Build5Nines Dev VM'
   IaC: 'Azure Bicep'
   source: 'https://github.com/Build5Nines/tools/blob/main/iac/azure/b59-dev-vm/deploy.bicep'
 }
