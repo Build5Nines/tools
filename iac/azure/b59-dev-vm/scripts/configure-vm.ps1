@@ -28,7 +28,6 @@ function Add-Path {
         $newPath = "$currentPath;$path"
         # Set the system PATH environment variable
         [System.Environment]::SetEnvironmentVariable("Path", $newPath, [System.EnvironmentVariableTarget]::Machine)
-
     }
 }
 
@@ -61,27 +60,46 @@ New-ItemProperty -Path $HKLM -Name "DoNotOpenServerManagerAtLogon" -Value 1 -Pro
 Set-ItemProperty -Path $HKLM -Name "DoNotOpenServerManagerAtLogon" -Value 1 -Type DWord
 
 
-# Check if winget is installed
-if (-not (Get-Command "winget" -ErrorAction SilentlyContinue)) {
-    Write-Output "winget is not installed. Installing winget..."
 
-    # URL to download the latest App Installer package
-    $appInstallerUrl = "https://aka.ms/getwinget"
-
-    # Path to download the installer
-    $installerPath = "$env:TEMP\AppInstaller.msixbundle"
-
+function Install-Appx {
+    param (
+        [string]$url,
+        [string]$filename
+    )
+    $installerPath = "$env:TEMP\$filename"
     # Download the App Installer package
-    Write-Output "Downloading App Installer package..."
+    Write-Output "Downloading App Installer package [$url]..."
     # Invoke-WebRequest -Uri $appInstallerUrl -OutFile $installerPath
-    Download-File -url $appInstallerUrl -output $installerPath
+    Download-File -url $url -output $installerPath
 
     # Install the App Installer package
-    Write-Output "Installing App Installer package..."
+    Write-Output "Installing App Installer package [$url]..."
     Add-AppxPackage -Path $installerPath
 
     # Cleanup the installer
     Remove-Item -Path $installerPath
+}
+
+# Check if winget is installed
+if (-not (Get-Command "winget" -ErrorAction SilentlyContinue)) {
+    Write-Output "winget is not installed. Installing winget..."
+
+    # https://learn.microsoft.com/en-us/windows/package-manager/winget/
+    Install-Appx "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx" "Microsoft.VCLibs.x64.14.00.Desktop.appx"
+    Install-Appx "https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx" "Microsoft.UI.Xaml.2.8.x64.appx"
+    Install-Appx "https://aka.ms/getwinget" "AppInstaller.msixbundle"
+
+    # Create reparse point
+    $SetExecutionAliasSplat = @{
+        Path        = "$([System.Environment]::SystemDirectory)\winget.exe"
+        PackageName = "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe"
+        EntryPoint  = "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe!winget"
+        Target      = "$((Get-AppxPackage Microsoft.DesktopAppInstaller).InstallLocation)\AppInstallerCLI.exe"
+        AppType     = 'Desktop'
+        Version     = 3
+    }
+    #Set-ExecutionAlias @SetExecutionAliasSplat & explorer.exe "shell:appsFolder\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe!winget"
+    explorer.exe "shell:appsFolder\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe!winget"
 
     Write-Output "winget installation completed. You may need to restart your terminal."
 } else {
