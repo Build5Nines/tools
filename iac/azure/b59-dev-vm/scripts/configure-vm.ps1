@@ -149,6 +149,69 @@ function Install-VSCodeExtension {
     }
 }
 
+function Install-NodeJS {
+    $nodeJsUrlRoot = "https://nodejs.org/dist/latest"
+    # URL to get the latest Node.js version number
+    $nodeJsLatestUrl = "$nodeJsUrlRoot/SHASUMS256.txt"
+
+    # Path to download the installer
+    $installerPath = "$env:TEMP\nodejs.msi"
+
+    # Get the latest Node.js version number
+    Write-Output "Fetching the latest Node.js version..."
+    $latestVersionResponse = Invoke-RestMethod -Uri $nodeJsLatestUrl
+    $latestVersion = ($latestVersionResponse -split "\n") -match 'node-v(\d+\.\d+\.\d+)-x64.msi'
+    $latestVersion = ($latestVersion -split " ")[2]
+
+    Write-Output "Latest Node.js version is $latestVersion"
+
+    # Construct the download URL for the Windows 64-bit MSI installer
+    $downloadUrl = "$nodeJsUrlRoot/$latestVersion"
+
+    # Download the latest Node.js installer
+    Write-Output "Downloading Node.js $latestVersion..."
+    Download-File -url $downloadUrl -output $installerPath
+
+    # Install Node.js
+    Write-Output "Installing Node.js $latestVersion..."
+    Start-Process -FilePath $installerPath -ArgumentList "/quiet" -Wait
+
+    # Cleanup the installer
+    Remove-Item -Path $installerPath
+
+    Write-Output "Node.js $latestVersion installation completed."
+}
+
+function Install-Python {
+    # # URL to get the latest Python release page
+    $pythonReleaseUrl = "https://www.python.org/ftp/python/"
+
+    # # Path to download the installer
+    # $installerPath = "$env:TEMP\python-installer.exe"
+
+    # # Get the latest Python version number
+    # Write-Output "Fetching the latest Python version..."
+    # $latestVersionPage = Invoke-RestMethod -Uri $pythonReleaseUrl | Select-Object -ExpandProperty Content
+    # $latestVersion = ($latestVersionPage -split "`n") -match 'href="(\d+\.\d+\.\d+)/"' | ForEach-Object { $_ -match 'href="(\d+\.\d+\.\d+)/"' ; $matches[1] } | Sort-Object -Descending | Select-Object -First 1
+    $latestVersion = "3.12.3"
+    # Write-Output "Latest Python version is $latestVersion"
+
+    # Construct the download URL for the Windows 64-bit installer
+    $downloadUrl = "$pythonReleaseUrl$latestVersion/python-$latestVersion-amd64.exe" # "$pythonReleaseUrl$latestVersion/python-$latestVersion-amd64.exe"
+
+    # Download the latest Python installer
+    Write-Output "Downloading Python $latestVersion..."
+    Download-File -url $downloadUrl -output $installerPath
+
+    # Install Python
+    Write-Output "Installing Python $latestVersion..."
+    Start-Process -FilePath $installerPath -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1" -Wait
+
+    # Cleanup the installer
+    Remove-Item -Path $installerPath
+
+    Write-Output "Python $latestVersion installation completed."
+}
 
 
 # Optionally install additional software
@@ -176,7 +239,7 @@ if([string]::IsNullOrEmpty($installOptions) -eq $false)
     if($installOptions.Contains("Git")) 
     {
         # Install Git
-        Instsall-Git
+        Install-Git
         # $Path = $env:TEMP; 
         # $Installer = "Git-2.45.1-64-bit.exe"
         # Write-Output "Downloading Git Client"
@@ -198,6 +261,20 @@ if([string]::IsNullOrEmpty($installOptions) -eq $false)
         $Shortcut.Save()  
     }
 
+    if($installOptions.Contains("NodeJS")) 
+    {
+        Install-NodeJS
+    }
+
+    if($installOptions.Contains("Python")) 
+    {
+        Install-Python
+        if($installOptions.Contains("VSCode")) 
+        {
+            Install-VSCodeExtension -extensionName "ms-python.python"
+        }
+    }
+
     if($installOptions.Contains("AzureCLI")) 
     {
         # Install Azure CLI 2
@@ -208,6 +285,11 @@ if([string]::IsNullOrEmpty($installOptions) -eq $false)
         Write-Output "Installing Azure CLI from $Path\$Installer..."
         Start-Process -FilePath msiexec -Args "/i $Path\$Installer /quiet /qn /norestart" -Verb RunAs -Wait
         Remove-Item $Path\$Installer
+
+        if($installOptions.Contains("VSCode")) 
+        {
+            Install-VSCodeExtension -extensionName "ms-vscode.azurecli"
+        }
     }
 
     if($installOptions.Contains("AzurePowerShell")) 
