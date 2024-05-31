@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "710024814108744702"
+      "templateHash": "8548597312495421168"
     }
   },
   "parameters": {
@@ -88,7 +88,6 @@
     "customScriptFileName": "configure-vm.ps1",
     "customScriptUri": "[format('{0}{1}', variables('customScriptFolder'), variables('customScriptFileName'))]",
     "customScriptCommandToExecute": "[format('powershell -ExecutionPolicy Unrestricted -File \"{0}\" -sourceZipUrl \"{1}\" -destinationFolder \"{2}\" -installOptions \"{3}\"', variables('customScriptFileName'), parameters('customScriptFilesZipUri'), parameters('customScriptFilesDestFolder'), parameters('customScriptInstallOptions'))]",
-    "virtualMachineZone": "1",
     "resourceNamePrefix": "[format('{0}-{1}', parameters('resourcePrefix'), uniqueString(resourceGroup().id))]",
     "computerName": "build5nines",
     "tags": {
@@ -175,11 +174,8 @@
         }
       },
       "sku": {
-        "name": "Standard"
-      },
-      "zones": [
-        "[variables('virtualMachineZone')]"
-      ]
+        "name": "Basic"
+      }
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
@@ -238,9 +234,6 @@
           }
         }
       },
-      "zones": [
-        "[variables('virtualMachineZone')]"
-      ],
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces', format('{0}-nic', variables('resourceNamePrefix')))]"
       ]

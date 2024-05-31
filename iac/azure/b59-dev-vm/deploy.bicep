@@ -51,7 +51,6 @@ var customScriptUri = '${customScriptFolder}${customScriptFileName}'
 var customScriptCommandToExecute = 'powershell -ExecutionPolicy Unrestricted -File "${customScriptFileName}" -sourceZipUrl "${customScriptFilesZipUri}" -destinationFolder "${customScriptFilesDestFolder}" -installOptions "${customScriptInstallOptions}"'
 
 
-var virtualMachineZone = '1'
 var resourceNamePrefix = '${resourcePrefix}-${uniqueString(resourceGroup().id)}'
 var computerName = 'build5nines'
 
@@ -130,11 +129,8 @@ resource publicIpAddress 'Microsoft.Network/publicIpAddresses@2020-08-01' = {
     }
   }
   sku: {
-    name: 'Standard'
+    name: 'Basic'
   }
-  zones: [
-    virtualMachineZone
-  ]
 }
 
 resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-03-01' = {
@@ -195,9 +191,6 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-03-01' = {
       }
     }
   }
-  zones: [
-    virtualMachineZone
-  ]
 }
 
 
