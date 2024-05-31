@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.27.1.19265",
-      "templateHash": "8186246677092507647"
+      "templateHash": "2131183176553915335"
     }
   },
   "parameters": {
@@ -73,7 +73,7 @@
     },
     "customScriptInstallOptions": {
       "type": "string",
-      "defaultValue": "Chrome|VSCode|Git|PowerShell|AzureCLI|AzurePowerShell|Terraform",
+      "defaultValue": "Chrome|VSCode|Git|PowerShell|AzureCLI|AzurePowerShell|Terraform|NodeJS|Python",
       "metadata": {
         "description": "List of software to install on the VM"
       }

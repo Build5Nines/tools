@@ -39,7 +39,7 @@ param customScriptFilesZipUri string = ''
 param customScriptFilesDestFolder string = 'C:\\lab'
 
 @description('List of software to install on the VM')
-param customScriptInstallOptions string = 'Chrome|VSCode|Git|PowerShell|AzureCLI|AzurePowerShell|Terraform'
+param customScriptInstallOptions string = 'Chrome|VSCode|Git|PowerShell|AzureCLI|AzurePowerShell|Terraform|NodeJS|Python'
 
 var customScriptFolder = 'https://raw.githubusercontent.com/build5nines/tools/main/iac/azure/b59-dev-vm/scripts/'
 var customScriptFileName = 'configure-vm.ps1'
